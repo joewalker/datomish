@@ -137,6 +137,14 @@ macro_rules! def_as_ref {
     }
 }
 
+macro_rules! def_to {
+    ($name: ident, $as_fn: ident, $t: ty) => {
+        pub fn $name(&self) -> Option<$t> {
+            self.$as_fn().map(|x| x.clone())
+        }
+    }
+}
+
 impl Value {
     def_is!(is_nil, Nil);
     def_is!(is_boolean, Boolean(_));
@@ -188,6 +196,17 @@ impl Value {
     pub fn from_keyword<'a, T: Into<Option<&'a str>>>(namespace: T, name: &str) -> Value {
         to_keyword(namespace, name)
     }
+
+    def_to!(to_big_integer, as_big_integer, BigInt);
+    def_to!(to_ordered_float, as_ordered_float, OrderedFloat<f64>);
+    def_to!(to_text, as_text, String);
+    def_to!(to_symbol, as_symbol, symbols::PlainSymbol);
+    def_to!(to_keyword, as_keyword, symbols::Keyword);
+    def_to!(to_namespaced_keyword, as_namespaced_keyword, symbols::NamespacedKeyword);
+    def_to!(to_vector, as_vector, Vec<Value>);
+    def_to!(to_list, as_list, LinkedList<Value>);
+    def_to!(to_set, as_set, BTreeSet<Value>);
+    def_to!(to_map, as_map, BTreeMap<Value, Value>);
 }
 
 impl From<f64> for Value {

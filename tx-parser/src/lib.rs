@@ -35,11 +35,7 @@ fn fn_parser<O, I>(f: fn(I) -> ParseResult<O, I>, err: &'static str) -> TxParser
 }
 
 def_value_satisfy_parser_fn!(Tx, integer, i64, Value::as_integer);
-
-fn value_to_namespaced_keyword(val: &Value) -> Option<NamespacedKeyword> {
-    if let &Value::NamespacedKeyword(ref i) = val { Some(i.clone()) } else { None }
-}
-def_value_satisfy_parser_fn!(Tx, keyword, NamespacedKeyword, value_to_namespaced_keyword);
+def_value_satisfy_parser_fn!(Tx, keyword, NamespacedKeyword, Value::to_namespaced_keyword);
 
 def_parser_fn!(Tx, entid, Value, Entid, input, {
     Tx::<I>::integer()
